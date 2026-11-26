@@ -1,0 +1,77 @@
+digraph G {
+  rankdir=BT; splines=ortho; nodesep=0.5; ranksep=0.9; bgcolor="white";
+  node [shape=plain, fontname="Helvetica", fontsize=10];
+  edge [fontname="Helvetica", fontsize=9];
+
+  Transaction [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#EAF2FB">
+    <tr><td bgcolor="#BBD3EE" border="1"><i><b>Transaction</b></i><br/>«abstract»</td></tr>
+    <tr><td align="left" balign="left" border="1">- id : int<br/>- description : String<br/>- amount : double<br/>- date : LocalDate<br/>- category : String</td></tr>
+    <tr><td align="left" balign="left" border="1">+ getType() : String {abstract}<br/>+ getSignedAmount() : double {abstract}<br/>+ setAmount(double) : void<br/>+ setCategory(String) : void<br/>+ toCsv() : String<br/>+ normalizeCategory(String) : String</td></tr></table>>];
+
+  Expense [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#FDF1E3">
+    <tr><td bgcolor="#F5CFA0" border="1"><b>Expense</b></td></tr>
+    <tr><td align="left" balign="left" border="1">+ getType() : String<br/>+ getSignedAmount() : double</td></tr></table>>];
+
+  Income [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#E6F4EA">
+    <tr><td bgcolor="#B5DDBE" border="1"><b>Income</b></td></tr>
+    <tr><td align="left" balign="left" border="1">+ getType() : String<br/>+ getSignedAmount() : double</td></tr></table>>];
+
+  ExpenseManager [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#F3ECFA">
+    <tr><td bgcolor="#D6C3EC" border="1"><b>ExpenseManager</b></td></tr>
+    <tr><td align="left" balign="left" border="1">- transactions : List&lt;Transaction&gt;<br/>- budgets : Map&lt;String, Double&gt;<br/>- nextId : int</td></tr>
+    <tr><td align="left" balign="left" border="1">+ addExpense(...) : Expense<br/>+ addIncome(...) : Income<br/>+ removeById(int) : boolean<br/>+ searchByKeyword(String) : List<br/>+ searchByCategory(String) : List<br/>+ searchByDateRange(from, to) : List<br/>+ sortBy(SortKey, boolean) : List<br/>+ setBudget(String, double) : void<br/>+ getBudgetStatus(String, YearMonth)<br/>+ checkBudgetWarning(Expense) : String<br/>+ totalIncome / totalExpenses(YearMonth)<br/>+ spendingByCategory(YearMonth) : Map</td></tr></table>>];
+
+  BudgetStatus [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#FFFBE6">
+    <tr><td bgcolor="#F4E7A1" border="1"><b>BudgetStatus</b></td></tr>
+    <tr><td align="left" balign="left" border="1">- category : String<br/>- limit : double<br/>- spent : double</td></tr>
+    <tr><td align="left" balign="left" border="1">+ getRemaining() : double<br/>+ getFractionUsed() : double<br/>+ isExceeded() : boolean<br/>+ isNearLimit() : boolean<br/>+ getLabel() : String</td></tr></table>>];
+
+  FileManager [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#EAF7F7">
+    <tr><td bgcolor="#B3DEDE" border="1"><b>FileManager</b></td></tr>
+    <tr><td align="left" balign="left" border="1">- dir : Path</td></tr>
+    <tr><td align="left" balign="left" border="1">+ save(ExpenseManager) : void<br/>+ load(ExpenseManager) : int<br/>+ exportReport(String, String) : Path<br/>+ escapeCsv(String) : String<br/>+ parseCsvLine(String) : List</td></tr></table>>];
+
+  Reportable [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#F4F4F4">
+    <tr><td bgcolor="#D5D5D5" border="1"><i><b>Reportable</b></i><br/>«interface»</td></tr>
+    <tr><td align="left" balign="left" border="1">+ getReportName() : String<br/>+ generateReport(YearMonth) : String</td></tr></table>>];
+
+  AbstractReport [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#F4F4F4">
+    <tr><td bgcolor="#D5D5D5" border="1"><i><b>AbstractReport</b></i><br/>«abstract»</td></tr>
+    <tr><td align="left" balign="left" border="1"># manager : ExpenseManager</td></tr>
+    <tr><td align="left" balign="left" border="1">+ generateReport(YearMonth) : String {final}<br/># buildBody(YearMonth) : String {abstract}</td></tr></table>>];
+
+  MonthlySummaryReport [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#F4F4F4"><tr><td bgcolor="#D5D5D5" border="1"><b>MonthlySummaryReport</b></td></tr><tr><td align="left" border="1"># buildBody(YearMonth) : String</td></tr></table>>];
+  CategoryBreakdownReport [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#F4F4F4"><tr><td bgcolor="#D5D5D5" border="1"><b>CategoryBreakdownReport</b></td></tr><tr><td align="left" border="1"># buildBody(YearMonth) : String</td></tr></table>>];
+  BudgetReport [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#F4F4F4"><tr><td bgcolor="#D5D5D5" border="1"><b>BudgetReport</b></td></tr><tr><td align="left" border="1"># buildBody(YearMonth) : String</td></tr></table>>];
+
+  ConsoleUI [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#FDECEC">
+    <tr><td bgcolor="#F2BDBD" border="1"><b>ConsoleUI</b></td></tr>
+    <tr><td align="left" balign="left" border="1">- in : Scanner<br/>- manager : ExpenseManager<br/>- files : FileManager<br/>- reports : List&lt;Reportable&gt;</td></tr>
+    <tr><td align="left" balign="left" border="1">+ run() : void<br/>- addTransaction(boolean) : void<br/>- searchMenu() / sortMenu() : void<br/>- budgetMenu() / reportMenu() : void<br/>- readInt / readAmount / readDate ...</td></tr></table>>];
+
+  Main [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#FDECEC"><tr><td bgcolor="#F2BDBD" border="1"><b>Main</b></td></tr><tr><td align="left" border="1">+ main(String[]) : void</td></tr></table>>];
+
+  Exc [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#FFF0F0"><tr><td bgcolor="#F7C6C6" border="1"><b>InvalidTransactionException</b><br/>extends Exception</td></tr><tr><td align="left" border="1">+ InvalidTransactionException(String)</td></tr></table>>];
+
+  Fmt [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" bgcolor="#F4F4F4"><tr><td bgcolor="#D5D5D5" border="1"><b>Fmt</b><br/>«utility»</td></tr><tr><td align="left" balign="left" border="1">+ money(double) : String<br/>+ bar(double, int) : String<br/>+ truncate(String, int) : String</td></tr></table>>];
+
+  // inheritance
+  Expense -> Transaction [arrowhead=empty];
+  Income -> Transaction [arrowhead=empty];
+  MonthlySummaryReport -> AbstractReport [arrowhead=empty];
+  CategoryBreakdownReport -> AbstractReport [arrowhead=empty];
+  BudgetReport -> AbstractReport [arrowhead=empty];
+  // realization
+  AbstractReport -> Reportable [arrowhead=empty, style=dashed];
+  // aggregation / association
+  ExpenseManager -> Transaction [arrowhead=none, arrowtail=odiamond, dir=both, headlabel="  *", taillabel="1 "];
+  AbstractReport -> ExpenseManager [arrowhead=vee, label=" uses"];
+  ConsoleUI -> ExpenseManager [arrowhead=vee, label=" 1"];
+  ConsoleUI -> FileManager [arrowhead=vee, label=" 1"];
+  ConsoleUI -> Reportable [arrowhead=vee, label=" 3"];
+  Main -> ConsoleUI [arrowhead=vee, style=dashed, label=" creates"];
+  // dependency
+  ExpenseManager -> BudgetStatus [arrowhead=vee, style=dashed, label=" creates"];
+  FileManager -> ExpenseManager [arrowhead=vee, style=dashed, label=" reads/writes"];
+  Transaction -> Exc [arrowhead=vee, style=dashed, label=" throws"];
+}

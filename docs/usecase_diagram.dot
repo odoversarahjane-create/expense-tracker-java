@@ -1,0 +1,18 @@
+digraph UC {
+  rankdir=LR; bgcolor="white"; fontname="Helvetica";
+  node [fontname="Helvetica", fontsize=11];
+  edge [arrowhead=none, color="#555555"];
+  User [shape=box, style="rounded,filled", fillcolor="#EAF2FB", label="User\n(Actor)"];
+  subgraph cluster_sys {
+    label="Expense Tracker System"; style=rounded; color="#888888"; fontsize=13;
+    node [shape=ellipse, style=filled, fillcolor="#FFFFFF"];
+    UC1 [label="Add expense"]; UC2 [label="Add income"]; UC3 [label="View transactions"];
+    UC4 [label="Search transactions"]; UC5 [label="Sort transactions"]; UC6 [label="Delete transaction"];
+    UC7 [label="Set / remove\nmonthly budget"]; UC8 [label="View reports"]; UC9 [label="Export report"];
+    UC10 [label="Load demo data"]; UC11 [label="Save / load data\n(CSV, automatic)"]; UC12 [label="Check budget warning", fillcolor="#FFF6DD"];
+  }
+  User -> UC1; User -> UC2; User -> UC3; User -> UC4; User -> UC5; User -> UC6; User -> UC7; User -> UC8; User -> UC10;
+  UC8 -> UC9 [arrowhead=open, style=dashed, label="«extend»", fontsize=9];
+  UC1 -> UC12 [arrowhead=open, style=dashed, label="«include»", fontsize=9];
+  UC1 -> UC11 [arrowhead=open, style=dashed, label="«include»", fontsize=9];
+}
