@@ -7,7 +7,7 @@
 
 ## Badilla, Reynald Rey (Project Leader)
 
-**GitHub username:** [GitHub username]
+**GitHub username:** reywxyz
 
 As project leader, I created the GitHub repository, added my groupmates as
 collaborators, and coordinated how we split the work. I designed the transaction
